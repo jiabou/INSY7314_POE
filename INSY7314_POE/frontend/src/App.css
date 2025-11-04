@@ -1,3 +1,4 @@
+/* Dave Gray (2022) App styling: */
 body {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   background-color: #f4f6f9;
@@ -101,3 +102,8 @@ th {
 .action-btn:hover {
   opacity: 0.8;
 }
+
+/*
+Reference list:
+React.js App Project | MERN Stack Tutorial. 2022. YouTube video, added by Dave Gray. [Online]. Available at: https://www.youtube.com/watch?v=5cc09qZK0VU [Accessed 9 October 2025]. 
+*/

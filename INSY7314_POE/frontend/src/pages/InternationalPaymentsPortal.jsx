@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
+//Dave Gray (2022) Page with a table:
+
 const InternationalPaymentsPortal = () => {
   const [payments, setPayments] = useState([]);
   const [error, setError] = useState("");
@@ -69,3 +71,9 @@ const InternationalPaymentsPortal = () => {
 };
 
 export default InternationalPaymentsPortal;
+
+/*
+Reference list:
+React.js App Project | MERN Stack Tutorial. 2022. YouTube video, added by Dave Gray. [Online]. Available at: https://www.youtube.com/watch?v=5cc09qZK0VU [Accessed 9 October 2025]. 
+The IIE. 2025. LAB GUIDE 2025 [INSY7314 LAB GUIDE]. The Independent Institute of Education: Unpublished. 
+*/

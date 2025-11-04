@@ -1,3 +1,5 @@
+//The IIE (2025:69) Regex from w3schools:
+
 export const regexPatterns = {
   full_name: /^[A-Za-z\s]{2,50}$/,
   id_number: /^\d{13}$/,
@@ -17,3 +19,5 @@ export const validateField = (name, value) => {
   if (!pattern) return true; // ignore if not defined
   return pattern.test(value);
 };
+
+//The IIE. 2025. LAB GUIDE 2025 [INSY7314 LAB GUIDE]. The Independent Institute of Education: Unpublished. 
