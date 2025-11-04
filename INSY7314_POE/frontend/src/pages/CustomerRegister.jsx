@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { validateField } from "../utils/regexValidation.js";
+
+//Dave Gray (2022) Register page:
 
 const CustomerRegister = () => {
   const [formData, setFormData] = useState({
@@ -14,6 +17,7 @@ const CustomerRegister = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+  //The IIE (2025:69) Regex from w3schools:
   const handleChange = (e) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
@@ -23,11 +27,17 @@ const CustomerRegister = () => {
     setMessage("");
     setError("");
 
+    for (const [key, value] of Object.entries(formData)) {
+      if (!validateField(key, value)) {
+        return setError(`Invalid ${key.replace("_", " ")}`);
+      }
+    }
+
     try {
       const res = await axios.post("http://localhost:5000/customers", formData);
       if (res.data.success) {
-        setMessage("Registration successful! Please log in.");
-        navigate("/customer/login");
+        setMessage("Registration successful! Redirecting...");
+        setTimeout(() => navigate("/customer/login"), 1500);
       } else {
         setError(res.data.message || "Registration failed");
       }
@@ -52,3 +62,9 @@ const CustomerRegister = () => {
 };
 
 export default CustomerRegister;
+
+/*
+Reference list:
+React.js App Project | MERN Stack Tutorial. 2022. YouTube video, added by Dave Gray. [Online]. Available at: https://www.youtube.com/watch?v=5cc09qZK0VU [Accessed 9 October 2025]. 
+The IIE. 2025. LAB GUIDE 2025 [INSY7314 LAB GUIDE]. The Independent Institute of Education: Unpublished. 
+*/

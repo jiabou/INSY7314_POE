@@ -5,10 +5,29 @@ import Employee from "./models/employee.model.js";
 import Customer from "./models/customer.model.js";
 import Transaction from "./models/transaction.model.js";
 import cors from 'cors';
+import rateLimit from 'express-rate-limit';
 
 dotenv.config();
 
 const app = express();
+
+//Highlights (2024) DDOS Protection:
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per window
+  message: {
+    success: false,
+    message: 'Too many requests from this IP, please try again later.'
+  },
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+});
+
+//Indusface (2025) Click jacking Protection:
+app.use((req, res, next) => {
+  res.setHeader("X-Frame-Options", "DENY");
+  next();
+});
 
 app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
 
@@ -146,7 +165,7 @@ app.post("/customers/login", async (req, res) => {
 app.post("/transactions", async (req, res) => {
     const transaction = req.body;
 
-    if (!transaction._id || !transaction.customer_id || !transaction.amount || !transaction.currency || !transaction.provider || !transaction.payee_account || !transaction.payee_swift || !transaction.status) {
+    if (!transaction.customer_id || !transaction.amount || !transaction.currency || !transaction.provider || !transaction.payee_account || !transaction.payee_swift || !transaction.status) {
         return res.status(400).json({ success: false, message: "Please provide all fields" });
     }
 
@@ -214,4 +233,6 @@ app.listen(PORT
 /*
 Reference list:
 MERN Stack Tutorial with Deployment – Beginner's Course. 2024. YouTube video, added by freeCodeCamp.org. [Online]. Available at: https://www.youtube.com/watch?v=O3BUHwfHf84&t=1620s [Accessed 3 October 2025]. 
+Highlights, F. 2024. Creating a Simple API Rate Limiter with NodeJs, Medium, 16 October 2024. [Blog]. Available at: https://medium.com/@ignatovich.dm/creating-a-simple-api-rate-limiter-with-node-a834d03bad7a [Accessed 3 October 2025]. 
+Indusface. 2025. Understanding X-Frame-Options: Examples and Benefits, 3 September 2025. [Online]. Available at: https://www.indusface.com/learning/x-frame-options [Accessed 3 October 2025].
 */

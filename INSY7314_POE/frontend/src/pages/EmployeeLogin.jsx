@@ -1,17 +1,28 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { validateField } from "../utils/regexValidation.js";
+
+//Dave Gray (2022) Login page:
 
 const EmployeeLogin = () => {
   const [form, setForm] = useState({ employee_id: "", role: "", password: "" });
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+  //The IIE (2025:69) Regex from w3schools:
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+
+    for (const [key, value] of Object.entries(form)) {
+      if (!validateField(key, value)) {
+        return setError(`Invalid ${key.replace("_", " ")}`);
+      }
+    }
+
     try {
       const res = await axios.post("http://localhost:5000/employees/login", form);
       if (res.data.success) {
@@ -37,3 +48,9 @@ const EmployeeLogin = () => {
 };
 
 export default EmployeeLogin;
+
+/*
+Reference list:
+React.js App Project | MERN Stack Tutorial. 2022. YouTube video, added by Dave Gray. [Online]. Available at: https://www.youtube.com/watch?v=5cc09qZK0VU [Accessed 9 October 2025]. 
+The IIE. 2025. LAB GUIDE 2025 [INSY7314 LAB GUIDE]. The Independent Institute of Education: Unpublished. 
+*/
