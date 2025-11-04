@@ -146,7 +146,7 @@ app.post("/customers/login", async (req, res) => {
 app.post("/transactions", async (req, res) => {
     const transaction = req.body;
 
-    if (!transaction._id || !transaction.customer_id || !transaction.amount || !transaction.currency || !transaction.provider || !transaction.payee_account || !transaction.payee_swift || !transaction.status) {
+    if (!transaction.customer_id || !transaction.amount || !transaction.currency || !transaction.provider || !transaction.payee_account || !transaction.payee_swift || !transaction.status) {
         return res.status(400).json({ success: false, message: "Please provide all fields" });
     }
 

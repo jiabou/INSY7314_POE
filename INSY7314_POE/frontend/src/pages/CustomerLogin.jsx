@@ -1,20 +1,31 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { CustomerContext } from "../context/CustomerContext.jsx";
+import { validateField } from "../utils/regexValidation.js";
 
 const CustomerLogin = () => {
   const [form, setForm] = useState({ full_name: "", account_number: "", password: "" });
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const { setCustomer } = useContext(CustomerContext);
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+
+    for (const [key, value] of Object.entries(form)) {
+      if (!validateField(key, value)) {
+        return setError(`Invalid ${key.replace("_", " ")}`);
+      }
+    }
+
     try {
       const res = await axios.post("http://localhost:5000/customers/login", form);
       if (res.data.success) {
+        setCustomer(res.data.data); // Save all customer data (including _id) in context
         navigate("/make-payments");
       } else {
         setError(res.data.message || "Login failed");

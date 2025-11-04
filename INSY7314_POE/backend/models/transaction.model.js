@@ -3,10 +3,6 @@ import mongoose from "mongoose";
 //Model.js freeCodeCamp.org (2024)
 
 const transactionSchema = new mongoose.Schema({
-    _id:{
-        type: String,
-        required: true
-    },
     customer_id:{
         type: String,
         required: true

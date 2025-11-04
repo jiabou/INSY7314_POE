@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { validateField } from "../utils/regexValidation.js";
 
 const CustomerRegister = () => {
   const [formData, setFormData] = useState({
@@ -23,11 +24,17 @@ const CustomerRegister = () => {
     setMessage("");
     setError("");
 
+    for (const [key, value] of Object.entries(formData)) {
+      if (!validateField(key, value)) {
+        return setError(`Invalid ${key.replace("_", " ")}`);
+      }
+    }
+
     try {
       const res = await axios.post("http://localhost:5000/customers", formData);
       if (res.data.success) {
-        setMessage("Registration successful! Please log in.");
-        navigate("/customer/login");
+        setMessage("Registration successful! Redirecting...");
+        setTimeout(() => navigate("/customer/login"), 1500);
       } else {
         setError(res.data.message || "Registration failed");
       }

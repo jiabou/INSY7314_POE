@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { validateField } from "../utils/regexValidation.js";
 
 const EmployeeLogin = () => {
   const [form, setForm] = useState({ employee_id: "", role: "", password: "" });
@@ -12,6 +13,13 @@ const EmployeeLogin = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+
+    for (const [key, value] of Object.entries(form)) {
+      if (!validateField(key, value)) {
+        return setError(`Invalid ${key.replace("_", " ")}`);
+      }
+    }
+
     try {
       const res = await axios.post("http://localhost:5000/employees/login", form);
       if (res.data.success) {
