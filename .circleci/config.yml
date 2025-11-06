@@ -13,7 +13,7 @@ jobs:
           name: Change directory to project root
           command: cd INSY7314_POE
 
-      # Restore and install frontend dependencies
+      # --- Frontend dependencies ---
       - restore_cache:
           keys:
             - v1-node-deps-frontend-{{ checksum "INSY7314_POE/frontend/package-lock.json" }}
@@ -21,17 +21,17 @@ jobs:
       - run:
           name: Install frontend dependencies
           command: |
-            if [ -f frontend/package-lock.json ]; then
-              cd frontend
+            if [ -f INSY7314_POE/frontend/package-lock.json ]; then
+              cd INSY7314_POE/frontend
               npm install
-              cd ..
+              cd ../..
             fi
       - save_cache:
           paths:
             - INSY7314_POE/frontend/node_modules
           key: v1-node-deps-frontend-{{ checksum "INSY7314_POE/frontend/package-lock.json" }}
 
-      # Restore and install backend dependencies (if Node.js backend)
+      # --- Backend dependencies (only if Node.js backend exists) ---
       - restore_cache:
           keys:
             - v1-node-deps-backend-{{ checksum "INSY7314_POE/backend/package-lock.json" }}
@@ -39,17 +39,17 @@ jobs:
       - run:
           name: Install backend dependencies
           command: |
-            if [ -f backend/package-lock.json ]; then
-              cd backend
+            if [ -f INSY7314_POE/backend/package-lock.json ]; then
+              cd INSY7314_POE/backend
               npm install
-              cd ..
+              cd ../..
             fi
       - save_cache:
           paths:
             - INSY7314_POE/backend/node_modules
           key: v1-node-deps-backend-{{ checksum "INSY7314_POE/backend/package-lock.json" }}
 
-      # Install SonarQube Scanner
+      # --- Install SonarQube Scanner ---
       - run:
           name: Install SonarQube Scanner
           command: |
@@ -57,7 +57,7 @@ jobs:
             unzip sonar-scanner.zip -d $HOME
             export PATH=$HOME/sonar-scanner-5.0.1.3006-linux/bin:$PATH
 
-      # Run SonarQube scan on all folders
+      # --- Run SonarQube scan on all folders ---
       - run:
           name: Run SonarQube Scan
           command: |
