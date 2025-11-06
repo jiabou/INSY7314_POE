@@ -1,0 +1,61 @@
+version: 2.1
+
+jobs:
+  sonar-scan:
+    docker:
+      - image: cimg/node:18.20  # Includes Node.js, npm, and OpenJDK 17
+
+    steps:
+      - checkout  # Checkout the project code
+
+      # Move into the correct project directory
+      - run:
+          name: Change directory to project folder
+          command: cd INSY7314_POE
+
+      # Restore Node.js dependencies cache for frontend
+      - restore_cache:
+          keys:
+            - v1-node-deps-{{ checksum "INSY7314_POE/frontend/package-lock.json" }}
+            - v1-node-deps-
+
+      # Install Node.js dependencies for frontend
+      - run:
+          name: Install frontend Node.js dependencies
+          command: |
+            cd INSY7314_POE/frontend
+            if [ -f package-lock.json ]; then
+              npm install
+            fi
+
+      # Save Node.js dependencies cache for frontend
+      - save_cache:
+          paths:
+            - INSY7314_POE/frontend/node_modules
+          key: v1-node-deps-{{ checksum "INSY7314_POE/frontend/package-lock.json" }}
+
+      # Install SonarQube Scanner
+      - run:
+          name: Install SonarQube Scanner
+          command: |
+            curl -sSLo sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip
+            unzip sonar-scanner.zip -d $HOME
+            export PATH=$HOME/sonar-scanner-5.0.1.3006-linux/bin:$PATH
+
+      # Run SonarQube scan
+      - run:
+          name: Run SonarQube Scan
+          command: |
+            cd INSY7314_POE
+            $HOME/sonar-scanner-5.0.1.3006-linux/bin/sonar-scanner \
+              -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
+              -Dsonar.organization=${SONAR_ORG} \
+              -Dsonar.host.url=${SONAR_HOST_URL} \
+              -Dsonar.login=${SONAR_TOKEN} \
+              -Dsonar.sources=frontend,backend \
+              -Dsonar.sourceEncoding=UTF-8
+
+workflows:
+  scan-workflow:
+    jobs:
+      - sonar-scan
