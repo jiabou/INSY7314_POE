@@ -9,25 +9,26 @@ jobs:
     steps:
       - checkout  # Checkout the project code
 
-      # OPTIONAL: Restore Node.js dependencies cache
+      # Restore Node.js dependencies cache for frontend
       - restore_cache:
           keys:
-            - v1-node-deps-{{ checksum "package-lock.json" }}
+            - v1-node-deps-{{ checksum "frontend/package-lock.json" }}
             - v1-node-deps-
 
-      # OPTIONAL: Install Node.js dependencies if package-lock.json exists
+      # Install Node.js dependencies for frontend if package-lock.json exists
       - run:
           name: Install Node.js dependencies
           command: |
-            if [ -f package-lock.json ]; then
+            if [ -f frontend/package-lock.json ]; then
+              cd frontend
               npm install
             fi
 
-      # Save Node.js dependencies cache for faster builds
+      # Save Node.js dependencies cache for frontend
       - save_cache:
           paths:
-            - node_modules
-          key: v1-node-deps-{{ checksum "package-lock.json" }}
+            - frontend/node_modules
+          key: v1-node-deps-{{ checksum "frontend/package-lock.json" }}
 
       # Install SonarQube Scanner
       - run:
@@ -37,17 +38,16 @@ jobs:
             unzip sonar-scanner.zip -d $HOME
             export PATH=$HOME/sonar-scanner-5.0.1.3006-linux/bin:$PATH
 
-      # Run SonarQube scan on FRONTEND and BACKEND
+      # Run SonarQube scan on frontend and backend
       - run:
           name: Run SonarQube scan
           command: |
-            export PATH=$HOME/sonar-scanner-5.0.1.3006-linux/bin:$PATH
-            sonar-scanner \
+            $HOME/sonar-scanner-5.0.1.3006-linux/bin/sonar-scanner \
               -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
               -Dsonar.organization=${SONAR_ORG} \
               -Dsonar.host.url=${SONAR_HOST_URL} \
               -Dsonar.login=${SONAR_TOKEN} \
-              -Dsonar.sources=FRONTEND,BACKEND \
+              -Dsonar.sources=frontend,backend \
               -Dsonar.sourceEncoding=UTF-8
 
 workflows:
