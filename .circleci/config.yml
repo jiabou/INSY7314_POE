@@ -1,28 +1,21 @@
-# Use the latest 2.1 version of CircleCI pipeline process engine.
-# See: https://circleci.com/docs/reference/configuration-reference
+# CircleCI configuration for VS Code project with FRONTEND and BACKEND folders
 version: 2.1
 
-# Define jobs to be invoked later in a workflow.
-# See: https://circleci.com/docs/guides/orchestrate/jobs-steps/#jobs-overview
 jobs:
   sonar-scan:
-    # Execution environment: use a Java image because SonarScanner requires Java
-    # If your backend is .NET, additional configuration is required for MSBuild scanner.
     docker:
       - image: cimg/openjdk:17.0  # Java environment for SonarScanner
 
     steps:
-      # Checkout your code as the first step
-      - checkout
+      - checkout  # Checkout the project code
 
-      # OPTIONAL: Restore cache for Node.js dependencies if frontend/backend use Node
-      # Adjust the path and checksum file to match your project
+      # OPTIONAL: Restore Node.js dependencies cache
       - restore_cache:
           keys:
             - v1-node-deps-{{ checksum "package-lock.json" }}
             - v1-node-deps-
 
-      # Install dependencies (example for Node.js projects)
+      # OPTIONAL: Install Node.js dependencies if package-lock.json exists
       - run:
           name: Install Node.js dependencies
           command: |
@@ -30,14 +23,13 @@ jobs:
               npm install
             fi
 
-      # Save Node.js dependencies cache for faster future builds
+      # Save Node.js dependencies cache for faster builds
       - save_cache:
           paths:
             - node_modules
           key: v1-node-deps-{{ checksum "package-lock.json" }}
 
       # Install SonarQube Scanner
-      # See: https://docs.sonarqube.org/latest/analysis/scan/sonarscanner/
       - run:
           name: Install SonarQube Scanner
           command: |
@@ -45,8 +37,7 @@ jobs:
             unzip sonar-scanner.zip -d $HOME
             export PATH=$HOME/sonar-scanner-5.0.1.3006-linux/bin:$PATH
 
-      # Run SonarQube analysis
-      # Make sure to replace 'backend,frontend' with your actual source folders
+      # Run SonarQube scan on FRONTEND and BACKEND
       - run:
           name: Run SonarQube scan
           command: |
@@ -56,12 +47,10 @@ jobs:
               -Dsonar.organization=${SONAR_ORG} \
               -Dsonar.host.url=${SONAR_HOST_URL} \
               -Dsonar.login=${SONAR_TOKEN} \
-              -Dsonar.sources=backend,frontend \
+              -Dsonar.sources=FRONTEND,BACKEND \
               -Dsonar.sourceEncoding=UTF-8
 
-# Orchestrate jobs using workflows
-# See: https://circleci.com/docs/guides/orchestrate/workflows/
 workflows:
-  scan-workflow: # Name of the workflow
+  scan-workflow:
     jobs:
       - sonar-scan
