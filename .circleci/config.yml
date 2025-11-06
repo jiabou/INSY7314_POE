@@ -8,7 +8,7 @@ jobs:
     steps:
       - checkout  # Checkout project code
 
-      # Move into the project root
+      # Move into project root
       - run:
           name: Change directory to project root
           command: cd INSY7314_POE
@@ -16,7 +16,6 @@ jobs:
       # --- Frontend dependencies ---
       - restore_cache:
           keys:
-            - v1-node-deps-frontend-{{ checksum "INSY7314_POE/frontend/package-lock.json" }}
             - v1-node-deps-frontend-
       - run:
           name: Install frontend dependencies
@@ -29,12 +28,11 @@ jobs:
       - save_cache:
           paths:
             - INSY7314_POE/frontend/node_modules
-          key: v1-node-deps-frontend-{{ checksum "INSY7314_POE/frontend/package-lock.json" }}
+          key: v1-node-deps-frontend-
 
-      # --- Backend dependencies (only if Node.js backend exists) ---
+      # --- Backend dependencies (if Node.js backend exists) ---
       - restore_cache:
           keys:
-            - v1-node-deps-backend-{{ checksum "INSY7314_POE/backend/package-lock.json" }}
             - v1-node-deps-backend-
       - run:
           name: Install backend dependencies
@@ -47,7 +45,7 @@ jobs:
       - save_cache:
           paths:
             - INSY7314_POE/backend/node_modules
-          key: v1-node-deps-backend-{{ checksum "INSY7314_POE/backend/package-lock.json" }}
+          key: v1-node-deps-backend-
 
       # --- Install SonarQube Scanner ---
       - run:
