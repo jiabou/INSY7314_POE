@@ -1,4 +1,3 @@
-# CircleCI configuration for VS Code project with FRONTEND and BACKEND folders
 version: 2.1
 
 jobs:
@@ -9,26 +8,31 @@ jobs:
     steps:
       - checkout  # Checkout the project code
 
+      # Move into the correct project directory
+      - run:
+          name: Change directory to project folder
+          command: cd INSY7314_POE
+
       # Restore Node.js dependencies cache for frontend
       - restore_cache:
           keys:
-            - v1-node-deps-{{ checksum "frontend/package-lock.json" }}
+            - v1-node-deps-{{ checksum "INSY7314_POE/frontend/package-lock.json" }}
             - v1-node-deps-
 
-      # Install Node.js dependencies for frontend if package-lock.json exists
+      # Install Node.js dependencies for frontend
       - run:
-          name: Install Node.js dependencies
+          name: Install frontend Node.js dependencies
           command: |
-            if [ -f frontend/package-lock.json ]; then
-              cd frontend
+            cd INSY7314_POE/frontend
+            if [ -f package-lock.json ]; then
               npm install
             fi
 
       # Save Node.js dependencies cache for frontend
       - save_cache:
           paths:
-            - frontend/node_modules
-          key: v1-node-deps-{{ checksum "frontend/package-lock.json" }}
+            - INSY7314_POE/frontend/node_modules
+          key: v1-node-deps-{{ checksum "INSY7314_POE/frontend/package-lock.json" }}
 
       # Install SonarQube Scanner
       - run:
@@ -38,10 +42,11 @@ jobs:
             unzip sonar-scanner.zip -d $HOME
             export PATH=$HOME/sonar-scanner-5.0.1.3006-linux/bin:$PATH
 
-      # Run SonarQube scan on frontend and backend
+      # Run SonarQube scan for both frontend and backend
       - run:
-          name: Run SonarQube scan
+          name: Run SonarQube Scan
           command: |
+            cd INSY7314_POE
             $HOME/sonar-scanner-5.0.1.3006-linux/bin/sonar-scanner \
               -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
               -Dsonar.organization=${SONAR_ORG} \
