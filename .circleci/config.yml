@@ -4,6 +4,7 @@ jobs:
   sonar-scan:
     docker:
       - image: cimg/node:18.20  # Node.js + npm + OpenJDK 17
+      - image: owasp/zap2docker-stable  # For API security scan
 
     steps:
       - checkout  # Checkout project code
@@ -30,7 +31,7 @@ jobs:
             - INSY7314_POE/frontend/node_modules
           key: v1-node-deps-frontend-
 
-      # --- Backend dependencies (if Node.js backend exists) ---
+      # --- Backend dependencies ---
       - restore_cache:
           keys:
             - v1-node-deps-backend-
@@ -47,6 +48,24 @@ jobs:
             - INSY7314_POE/backend/node_modules
           key: v1-node-deps-backend-
 
+      # --- SCA: Scan frontend and backend dependencies ---
+      - run:
+          name: Audit frontend dependencies
+          command: |
+            if [ -f INSY7314_POE/frontend/package-lock.json ]; then
+              cd INSY7314_POE/frontend
+              npm audit --audit-level=high || true
+              cd ../..
+            fi
+      - run:
+          name: Audit backend dependencies
+          command: |
+            if [ -f INSY7314_POE/backend/package-lock.json ]; then
+              cd INSY7314_POE/backend
+              npm audit --audit-level=high || true
+              cd ../..
+            fi
+
       # --- Install SonarQube Scanner ---
       - run:
           name: Install SonarQube Scanner
@@ -55,7 +74,7 @@ jobs:
             unzip sonar-scanner.zip -d $HOME
             export PATH=$HOME/sonar-scanner-5.0.1.3006-linux/bin:$PATH
 
-      # --- Run SonarQube scan on all folders ---
+      # --- Run SonarQube scan (SAST) ---
       - run:
           name: Run SonarQube Scan
           command: |
@@ -68,6 +87,19 @@ jobs:
               -Dsonar.sources=. \
               -Dsonar.exclusions=**/node_modules/**,**/dist/** \
               -Dsonar.sourceEncoding=UTF-8
+
+      # --- Run OWASP ZAP baseline scan (API security) ---
+      - run:
+          name: Run OWASP ZAP API Security Scan
+          command: |
+            # Start your app in the background (adjust command for your app)
+            # Example: npm start & 
+            nohup npm start &
+            sleep 10  # Give API time to start
+            # Run ZAP baseline scan
+            docker run --rm -t owasp/zap2docker-stable zap-baseline.py \
+              -t http://localhost:3000 \
+              -r zap_report.html
 
 workflows:
   scan-workflow:
