@@ -5,6 +5,7 @@ import Employee from "./models/employee.model.js";
 import Customer from "./models/customer.model.js";
 import Transaction from "./models/transaction.model.js";
 import cors from 'cors';
+import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 
 dotenv.config();
@@ -29,7 +30,8 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
+app.use(cors({ origin: 'https://localhost:5173', credentials: true }));
+app.use(helmet());  //(Jaiswal, 2025)
 
 app.use(express.json());// allows us to use to accept JSON data in req body freeCodeCamp.org (2024)
 
@@ -75,8 +77,10 @@ app.post("/employees/login", async (req, res) => {
             return res.status(401).json({ success: false, message: "Incorrect Employee credentials." });
         }
 
-        // Check password (plain text match – replace with password security with hashing and salting)
-        if (employee.password !== password) {
+        // Check password (plain text password matches password with hashing and salting)
+        const isMatch = await employee.comparePassword(password);
+
+        if (!isMatch) {
             return res.status(401).json({ success: false, message: "Incorrect password" });
         }
 
@@ -92,7 +96,7 @@ app.post("/employees/login", async (req, res) => {
             }
         });
     } catch (error) {
-        console.error("Error during customer login:", error.message);
+        console.error("Error during employee login:", error.message);
         res.status(500).json({ success: false, message: "Server Error" });
     }
 });
@@ -136,8 +140,10 @@ app.post("/customers/login", async (req, res) => {
             return res.status(404).json({ success: false, message: "Customer not found. Please register first." });
         }
 
-        // Check password (plain text match – replace with password security with hashing and salting)
-        if (customer.password !== password) {
+        // Check password (plain text password matches password with hashing and salting)
+        const isMatch = await customer.comparePassword(password);
+
+        if (!isMatch) {
             return res.status(401).json({ success: false, message: "Incorrect password" });
         }
 
@@ -222,17 +228,12 @@ app.put("/transactions/update/:id", async (req, res) => {
 });
 
 //freeCodeCamp.org (2024)
-const PORT = process.env.PORT || 5000;
-
-app.listen(PORT
-    , () => {
-    connectDB();
-    console.log("Server started at http://localhost:" + PORT);
-});
+connectDB(app);
 
 /*
 Reference list:
 MERN Stack Tutorial with Deployment – Beginner's Course. 2024. YouTube video, added by freeCodeCamp.org. [Online]. Available at: https://www.youtube.com/watch?v=O3BUHwfHf84&t=1620s [Accessed 3 October 2025]. 
 Highlights, F. 2024. Creating a Simple API Rate Limiter with NodeJs, Medium, 16 October 2024. [Blog]. Available at: https://medium.com/@ignatovich.dm/creating-a-simple-api-rate-limiter-with-node-a834d03bad7a [Accessed 3 October 2025]. 
 Indusface. 2025. Understanding X-Frame-Options: Examples and Benefits, 3 September 2025. [Online]. Available at: https://www.indusface.com/learning/x-frame-options [Accessed 3 October 2025].
+Jaiswal, A., 2025. A Beginner's Guide to Helmet.js: Protect Your Node.js Apps. [online] Available at: <https://www.bing.com/ck/a?!&&p=d94eefc42e8da6654d34160e5079d53f56c82b07568e6e098b53f272d4d8cb07JmltdHM9MTc2MjMwMDgwMA&ptn=3&ver=2&hsh=4&fclid=3227c8fe-cdf0-6c19-0c38-dea0cc676dd2&u=a1aHR0cHM6Ly9kZXYudG8vYWJoaXNoZWtqYWlzd2FsXzQ4OTYvYS1iZWdpbm5lcnMtZ3VpZGUtdG8taGVsbWV0anMtcHJvdGVjdC15b3VyLW5vZGVqcy1hcHBzLTRwMmM> [Accessed 5 November 2025]. 
 */

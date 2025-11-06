@@ -19,7 +19,7 @@ function App() {
         <Route path="/employee/login" element={<EmployeeLogin />} />
         <Route path="/make-payments" element={<MakePayments />} />
         <Route path="/portal" element={<InternationalPaymentsPortal />} />
-        <Route path="*" element={<div>404 Not Found</div>} />
+        <Route path="*" element={<div>PAYMENTS PORTAL</div>} />
       </Routes>
     </>
   );

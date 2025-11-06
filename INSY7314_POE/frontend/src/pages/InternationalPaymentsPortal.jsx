@@ -9,7 +9,7 @@ const InternationalPaymentsPortal = () => {
 
   const fetchPayments = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/transactions/fetch");
+      const res = await axios.get("https://localhost:5000/transactions/fetch");
       if (res.data.success) setPayments(res.data.data);
       else setError("Failed to load transactions");
     } catch {
@@ -23,7 +23,7 @@ const InternationalPaymentsPortal = () => {
 
   const handleUpdate = async (id, status) => {
     try {
-      await axios.put(`http://localhost:5000/transactions/update/${id}`, {
+      await axios.put(`https://localhost:5000/transactions/update/${id}`, {
         status,
         verified_by: "EMP001",
         verified_at: new Date().toISOString(),

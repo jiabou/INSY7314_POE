@@ -34,7 +34,7 @@ const CustomerRegister = () => {
     }
 
     try {
-      const res = await axios.post("http://localhost:5000/customers", formData);
+      const res = await axios.post("https://localhost:5000/customers", formData);
       if (res.data.success) {
         setMessage("Registration successful! Redirecting...");
         setTimeout(() => navigate("/customer/login"), 1500);

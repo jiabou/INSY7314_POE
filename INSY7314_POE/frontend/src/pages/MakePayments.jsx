@@ -41,7 +41,7 @@ const MakePayments = () => {
     }
 
     try {
-      const res = await axios.post("http://localhost:5000/transactions", form);
+      const res = await axios.post("https://localhost:5000/transactions", form);
       if (res.data.success) {
         setMessage("Payment submitted successfully.");
         setForm((prev) => ({ ...prev, amount: "", payee_account: "", payee_swift: "" }));

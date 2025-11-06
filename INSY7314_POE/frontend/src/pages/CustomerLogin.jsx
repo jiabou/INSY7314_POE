@@ -26,7 +26,7 @@ const CustomerLogin = () => {
     }
 
     try {
-      const res = await axios.post("http://localhost:5000/customers/login", form);
+      const res = await axios.post("https://localhost:5000/customers/login", form);
       if (res.data.success) {
         setCustomer(res.data.data); //Codr Kai (2023) Context: Save all customer data in context
         navigate("/make-payments");
