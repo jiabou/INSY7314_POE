@@ -3,26 +3,38 @@
 version: 2.1
 
 # Define jobs to be invoked later in a workflow.
-# See: https://circleci.com/docs/guides/orchestrate/jobs-steps/#jobs-overview & https://circleci.com/docs/reference/configuration-reference/#jobs
+# See: https://circleci.com/docs/guides/orchestrate/jobs-steps/#jobs-overview
 jobs:
   sonar-scan:
-    # Specify the execution environment. Here we use a Java environment for SonarQube Scanner.
-    # See: https://circleci.com/docs/guides/execution-managed/executor-intro/
+    # Execution environment: use a Java image because SonarScanner requires Java
+    # If your backend is .NET, additional configuration is required for MSBuild scanner.
     docker:
-      - image: cimg/openjdk:17.0  # Java environment for SonarQube Scanner
+      - image: cimg/openjdk:17.0  # Java environment for SonarScanner
 
-    # Add steps to the job
-    # See: https://circleci.com/docs/guides/orchestrate/jobs-steps/#steps-overview
     steps:
-      # Checkout the code as the first step.
+      # Checkout your code as the first step
       - checkout
 
-      # Cache dependencies to speed up builds
-      # See: https://circleci.com/docs/caching/
+      # OPTIONAL: Restore cache for Node.js dependencies if frontend/backend use Node
+      # Adjust the path and checksum file to match your project
       - restore_cache:
           keys:
-            - v1-dependencies-{{ checksum "pom.xml" }}
-            - v1-dependencies-
+            - v1-node-deps-{{ checksum "package-lock.json" }}
+            - v1-node-deps-
+
+      # Install dependencies (example for Node.js projects)
+      - run:
+          name: Install Node.js dependencies
+          command: |
+            if [ -f package-lock.json ]; then
+              npm install
+            fi
+
+      # Save Node.js dependencies cache for faster future builds
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-node-deps-{{ checksum "package-lock.json" }}
 
       # Install SonarQube Scanner
       # See: https://docs.sonarqube.org/latest/analysis/scan/sonarscanner/
@@ -34,7 +46,7 @@ jobs:
             export PATH=$HOME/sonar-scanner-5.0.1.3006-linux/bin:$PATH
 
       # Run SonarQube analysis
-      # See: https://docs.sonarqube.org/latest/analysis/scan/sonarscanner/
+      # Make sure to replace 'backend,frontend' with your actual source folders
       - run:
           name: Run SonarQube scan
           command: |
@@ -44,14 +56,12 @@ jobs:
               -Dsonar.organization=${SONAR_ORG} \
               -Dsonar.host.url=${SONAR_HOST_URL} \
               -Dsonar.login=${SONAR_TOKEN} \
-              -Dsonar.sources=./src \
-              -Dsonar.java.binaries=./target \
+              -Dsonar.sources=backend,frontend \
               -Dsonar.sourceEncoding=UTF-8
 
 # Orchestrate jobs using workflows
 # See: https://circleci.com/docs/guides/orchestrate/workflows/
 workflows:
-  scan-workflow: # This is the name of the workflow; you can rename it to match your process.
-    # Inside the workflow, you define the jobs you want to run.
+  scan-workflow: # Name of the workflow
     jobs:
       - sonar-scan
