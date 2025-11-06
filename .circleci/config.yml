@@ -3,36 +3,51 @@ version: 2.1
 jobs:
   sonar-scan:
     docker:
-      - image: cimg/node:18.20  # Includes Node.js, npm, and OpenJDK 17
+      - image: cimg/node:18.20  # Node.js + npm + OpenJDK 17
 
     steps:
-      - checkout  # Checkout the project code
+      - checkout  # Checkout project code
 
-      # Move into the correct project directory
+      # Move into the project root
       - run:
-          name: Change directory to project folder
+          name: Change directory to project root
           command: cd INSY7314_POE
 
-      # Restore Node.js dependencies cache for frontend
+      # Restore and install frontend dependencies
       - restore_cache:
           keys:
-            - v1-node-deps-{{ checksum "INSY7314_POE/frontend/package-lock.json" }}
-            - v1-node-deps-
-
-      # Install Node.js dependencies for frontend
+            - v1-node-deps-frontend-{{ checksum "INSY7314_POE/frontend/package-lock.json" }}
+            - v1-node-deps-frontend-
       - run:
-          name: Install frontend Node.js dependencies
+          name: Install frontend dependencies
           command: |
-            cd INSY7314_POE/frontend
-            if [ -f package-lock.json ]; then
+            if [ -f frontend/package-lock.json ]; then
+              cd frontend
               npm install
+              cd ..
             fi
-
-      # Save Node.js dependencies cache for frontend
       - save_cache:
           paths:
             - INSY7314_POE/frontend/node_modules
-          key: v1-node-deps-{{ checksum "INSY7314_POE/frontend/package-lock.json" }}
+          key: v1-node-deps-frontend-{{ checksum "INSY7314_POE/frontend/package-lock.json" }}
+
+      # Restore and install backend dependencies (if Node.js backend)
+      - restore_cache:
+          keys:
+            - v1-node-deps-backend-{{ checksum "INSY7314_POE/backend/package-lock.json" }}
+            - v1-node-deps-backend-
+      - run:
+          name: Install backend dependencies
+          command: |
+            if [ -f backend/package-lock.json ]; then
+              cd backend
+              npm install
+              cd ..
+            fi
+      - save_cache:
+          paths:
+            - INSY7314_POE/backend/node_modules
+          key: v1-node-deps-backend-{{ checksum "INSY7314_POE/backend/package-lock.json" }}
 
       # Install SonarQube Scanner
       - run:
@@ -42,7 +57,7 @@ jobs:
             unzip sonar-scanner.zip -d $HOME
             export PATH=$HOME/sonar-scanner-5.0.1.3006-linux/bin:$PATH
 
-      # Run SonarQube scan
+      # Run SonarQube scan on all folders
       - run:
           name: Run SonarQube Scan
           command: |
@@ -52,7 +67,8 @@ jobs:
               -Dsonar.organization=${SONAR_ORG} \
               -Dsonar.host.url=${SONAR_HOST_URL} \
               -Dsonar.login=${SONAR_TOKEN} \
-              -Dsonar.sources=frontend,backend \
+              -Dsonar.sources=. \
+              -Dsonar.exclusions=**/node_modules/**,**/dist/** \
               -Dsonar.sourceEncoding=UTF-8
 
 workflows:
