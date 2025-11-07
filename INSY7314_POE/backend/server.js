@@ -41,7 +41,7 @@ app.get("/", (req,res) => {
 });
 
 //Employees:
-
+/*
 //Add Employee: freeCodeCamp.org (2024) (remove/comment out after creating all employees)
 app.post("/employees", async (req, res) => {
     const employee = req.body;
@@ -59,6 +59,7 @@ app.post("/employees", async (req, res) => {
         res.status(500).json({ success: false, message: "Server Error" });
     }
 });
+*/
 
 //Search for Employee(Login): freeCodeCamp.org (2024)
 app.post("/employees/login", async (req, res) => {
