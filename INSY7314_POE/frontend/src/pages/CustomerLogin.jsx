@@ -10,7 +10,7 @@ const CustomerLogin = () => {
   const [form, setForm] = useState({ full_name: "", account_number: "", password: "" });
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const { setCustomer } = useContext(CustomerContext);
+  const { setCustomer } = useContext(CustomerContext); //Codr Kai (2023) Context: Set customer data
 
   //The IIE (2025:69) Regex from w3schools:
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });

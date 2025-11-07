@@ -3,14 +3,17 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App.jsx";
 import "./index.css";
-import { CustomerProvider } from "./context/CustomerContext.jsx"; //Codr Kai (2023) Context: reference
+import { EmployeeProvider } from "./context/EmployeeContext.jsx";  //Codr Kai (2023) Context: reference
+import { CustomerProvider } from "./context/CustomerContext.jsx";  //Codr Kai (2023) Context: reference
 
 //Dave Gray (2022) main.jsx:
 ReactDOM.createRoot(document.getElementById("root")).render(
   <BrowserRouter>
-    <CustomerProvider> 
-      <App />
-    </CustomerProvider>
+    <EmployeeProvider>
+      <CustomerProvider>
+        <App />
+      </CustomerProvider>
+    </EmployeeProvider> 
   </BrowserRouter>
 );
 

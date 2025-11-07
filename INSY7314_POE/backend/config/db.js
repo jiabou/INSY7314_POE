@@ -3,17 +3,17 @@ import http from "http";
 import fs from "fs";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-import path from 'path';   //(OpenAI, 2025)
+import path from 'path';   
 
 //db.js (freeCodeCamp.org, 2024; IIE, 2025)
 
 dotenv.config();
 
-const homeDirect = process.env.USERPROFILE;   //(OpenAI, 2025)
-const mkcertDirect = path.join(homeDirect, ".vite-plugin-mkcert");   //(OpenAI, 2025)
+const homeDirect = process.env.USERPROFILE;   
+const mkcertDirect = path.join(homeDirect, ".vite-plugin-mkcert");
 
-const certPath = path.join(mkcertDirect, "cert.pem");   //(OpenAI, 2025)
-const keyPath = path.join(mkcertDirect, "dev.pem");   //(OpenAI, 2025)
+const certPath = path.join(mkcertDirect, "cert.pem"); 
+const keyPath = path.join(mkcertDirect, "dev.pem");
 
 const PORT = process.env.PORT || 5000;
 const HOST = '0.0.0.0';
@@ -25,14 +25,14 @@ if (!mongoUri) {
   process.exit(1);
 }
 
-export const connectDB = async (app) => {   //(OpenAI, 2025)
+export const connectDB = async (app) => { 
     try {
         const conn = await mongoose.connect(mongoUri);
         console.log("MongoDB connected: "+conn.connection.host)
 
         if (useHttps) {
-            const privatekeyPath = keyPath;   //(OpenAI, 2025)
-            const certificatePath = certPath;   //(OpenAI, 2025)
+            const privatekeyPath = keyPath;
+            const certificatePath = certPath;
             const filesPresent = fs.existsSync(privatekeyPath) && fs.existsSync(certificatePath);
 
             if (!filesPresent) {
@@ -62,8 +62,5 @@ export const connectDB = async (app) => {   //(OpenAI, 2025)
 /*
 Reference list:
 MERN Stack Tutorial with Deployment – Beginner's Course. 2024. YouTube video, added by freeCodeCamp.org. [Online]. Available at: https://www.youtube.com/watch?v=O3BUHwfHf84&t=1620s [Accessed 3 October 2025]. 
-
 The Independent Instatute of Education (IIE), 2025. Information Systems 3D [INSY7314 Lab Guide 2025]. The Independent Instatute of Education: Unpublished.
-
-OpenAI, 2025. ChatGPT. Version 5. [app]. Available at: <https://chatgpt.com/> [Accessed 10 October 2025]. 
 */

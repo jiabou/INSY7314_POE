@@ -1,11 +1,13 @@
-import { useEffect, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import axios from "axios";
+import { EmployeeContext } from "../context/EmployeeContext.jsx";
 
 //Dave Gray (2022) Page with a table:
 
 const InternationalPaymentsPortal = () => {
   const [payments, setPayments] = useState([]);
   const [error, setError] = useState("");
+  const { employee } = useContext(EmployeeContext); //Codr Kai (2023) Context: Get employee data
 
   const fetchPayments = async () => {
     try {
@@ -21,11 +23,16 @@ const InternationalPaymentsPortal = () => {
     fetchPayments();
   }, []);
 
-  const handleUpdate = async (id, status) => {
+   const handleUpdate = async (id, status) => {
+    if (!employee || !employee.employee_id) {
+      alert("Employee not logged in.");
+      return;
+    }
+  
     try {
       await axios.put(`https://localhost:5000/transactions/update/${id}`, {
         status,
-        verified_by: "EMP001",
+        verified_by: employee.employee_id, //Codr Kai (2023) Context: Use employee_id
         verified_at: new Date().toISOString(),
       });
       fetchPayments();
@@ -76,4 +83,5 @@ export default InternationalPaymentsPortal;
 Reference list:
 React.js App Project | MERN Stack Tutorial. 2022. YouTube video, added by Dave Gray. [Online]. Available at: https://www.youtube.com/watch?v=5cc09qZK0VU [Accessed 9 October 2025]. 
 The IIE. 2025. LAB GUIDE 2025 [INSY7314 LAB GUIDE]. The Independent Institute of Education: Unpublished. 
+React JS Tutorial [2023]: How to pass data between pages - Params, Props, and Context. 2023. YouTube video, added by Codr Kai. [Online]. Available at: https://www.youtube.com/watch?v=J6-Iw0cJYJk [Accessed 4 November 2025]. 
 */

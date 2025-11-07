@@ -56,4 +56,8 @@ export default Customer;
 /*
 Reference list:
 MERN Stack Tutorial with Deployment – Beginner's Course. 2024. YouTube video, added by freeCodeCamp.org. [Online]. Available at: https://www.youtube.com/watch?v=O3BUHwfHf84&t=1620s [Accessed 3 October 2025]. 
+
+bcrypt.js, 2024. bcrypt.js GitHub Repository. [online] Available at: https://github.com/kelektiv/node.bcrypt.js [Accessed 10 October 2025].
+
+Mongoose, 2025. Middleware (Hooks). [online] Mongoose ODM. Available at: https://mongoosejs.com/docs/middleware.html [Accessed 10 October 2025].
 */

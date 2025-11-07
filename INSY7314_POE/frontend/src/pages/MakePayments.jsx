@@ -6,7 +6,7 @@ import { validateField } from "../utils/regexValidation.js";
 //Dave Gray (2022) Add item page:
 
 const MakePayments = () => {
-  const { customer } = useContext(CustomerContext);
+  const { customer } = useContext(CustomerContext); //Codr Kai (2023) Context: Get customer data
   const [form, setForm] = useState({
     customer_id: "",
     amount: "",
