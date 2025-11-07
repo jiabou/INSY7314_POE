@@ -3,11 +3,10 @@ version: 2.1
 jobs:
   sonar-scan:
     docker:
-      - image: cimg/node:18.20  # Node.js + npm + OpenJDK 17
+      - image: cimg/node:18.20
     steps:
       - checkout
 
-      # Move into project root
       - run:
           name: Change directory to project root
           command: cd INSY7314_POE
@@ -67,20 +66,26 @@ jobs:
 
   api-test:
     docker:
-      - image: owasp/zap2docker-stable  # OWASP ZAP API Security Scan
+      - image: cimg/node:18.20  # Use Node image and install ZAP manually
     steps:
       - checkout
-      - setup_remote_docker
       - run:
-          name: Start API server and run ZAP baseline scan
+          name: Install OWASP ZAP CLI and run baseline scan
           command: |
+            sudo apt-get update && sudo apt-get install -y wget unzip openjdk-17-jre
+            wget https://github.com/zaproxy/zaproxy/releases/download/v2.15.0/ZAP_2_15_0_unix.sh
+            chmod +x ZAP_2_15_0_unix.sh
+            ./ZAP_2_15_0_unix.sh -q -dir $HOME/zap
+            export PATH=$HOME/zap/ZAP_2.15.0:$PATH
+
+            # Start backend server
             cd INSY7314_POE/backend
             npm install
             nohup npm start &
-            sleep 15  # wait for server
+            sleep 15
 
-            # Run OWASP ZAP baseline scan
-            zap-baseline.py \
+            # Run ZAP baseline scan
+            $HOME/zap/ZAP_2.15.0/zap-baseline.py \
               -t http://localhost:3000 \
               -r zap_report.html || true
 
