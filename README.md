@@ -99,15 +99,15 @@ Setup Instructions
 * Open the following link in your browers of choice: https://localhost:5173/
 * Use the one of the following credentials to log into the employee login page:
 
-  Employee 1: 
-    Employee ID: E501
-    Role:        PaymentVerifier
-    Password:    Password!123
+&nbsp;  Employee 1: 
+&nbsp;    Employee ID: E501
+&nbsp;    Role:        PaymentVerifier
+&nbsp;    Password:    Password!123
 
-  Employee 2: 
-              Employee ID: E502
-              Role:        PaymentVerifier
-              Password:    Password!123
+&nbsp;  Employee 2: 
+&nbsp;              Employee ID: E502
+&nbsp;              Role:        PaymentVerifier
+&nbsp;              Password:    Password!123
 
 
 
@@ -115,17 +115,17 @@ Setup Instructions
 
 
 
-    Customer 1:
-                Full Name:      John Smith
-                Account Number: 25313189
-                Password:       Password!123
+&nbsp;    Customer 1:
+&nbsp;                Full Name:      John Smith
+&nbsp;                Account Number: 25313189
+&nbsp;                Password:       Password!123
 
 
 
-    Customer 2:
-                Full Name:      James May
-                Account Number: 12345678
-                Password:       Password!123
+&nbsp;    Customer 2:
+&nbsp;                Full Name:      James May
+&nbsp;                Account Number: 12345678
+&nbsp;                Password:       Password!123
 
 
 
