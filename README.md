@@ -99,22 +99,15 @@ Setup Instructions
 * Open the following link in your browers of choice: https://localhost:5173/
 * Use the one of the following credentials to log into the employee login page:
 
-&nbsp;   Employee 1: 
-                Employee ID: E501
+  Employee 1: 
+    Employee ID: E501
+    Role:        PaymentVerifier
+    Password:    Password!123
 
-&nbsp;               Role:        PaymentVerifier
-
-&nbsp;               Password:    Password!123
-
-
-
-    Employee 2: 
-
-                Employee ID: E502
-
-                Role:        PaymentVerifier
-
-                Password:    Password!123
+  Employee 2: 
+              Employee ID: E502
+              Role:        PaymentVerifier
+              Password:    Password!123
 
 
 
