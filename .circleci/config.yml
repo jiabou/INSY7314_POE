@@ -67,7 +67,7 @@ jobs:
 
   api-test:
     docker:
-      - image: owasp/zap2docker-weekly  # Dynamic scan image
+      - image: ghcr.io/zaproxy/zap2docker-stable  # Official OWASP ZAP image (no login needed)
     steps:
       - checkout
       - setup_remote_docker
@@ -80,7 +80,7 @@ jobs:
             nohup npm start &
             sleep 15  # Give server time to boot
 
-            # Run ZAP baseline scan against localhost:3000 (or your port)
+            # Run ZAP baseline scan against localhost:3000
             zap-baseline.py \
               -t http://localhost:3000 \
               -r zap_report.html || true
