@@ -117,19 +117,14 @@ Setup Instructions
 
     Customer 1:
                 Full Name:      John Smith
-
-                Account Number: 25313189
-
-&nbsp;               Password:       Password!123
+                Account Number: 25313189
+                Password:       Password!123
 
 
 
     Customer 2:
-
-                Full Name:      James May
-
-                Account Number: 12345678
-
+                Full Name:      James May
+                Account Number: 12345678
                 Password:       Password!123
 
 
